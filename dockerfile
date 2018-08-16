@@ -1,5 +1,4 @@
-FROM hsz1273327/pub-sub-broker:Base-v0
-ADD . /app/src/github.com/Basic-Components/req-rep-proxy
+FROM hsz1273327/golang-zmq
 ENV GOPATH="/app"
-WORKDIR /app/src/github.com/Basic-Components/req-rep-proxy
-RUN go build
+RUN go get github.com/pebbe/zmq4
+RUN go get github.com/sirupsen/logrus
