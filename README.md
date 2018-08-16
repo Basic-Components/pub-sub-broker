@@ -10,9 +10,9 @@
 | --------------- | ------ | -------------- | -------------------------------------------- |
 | `-help`         | bool   | `false`        | 帮助命令                                     |
 | `-debug`        | bool   | `false`        | 是否使用debug模式启动                        |
-| `-stack_name`   | string | `unknown`      | 后端服务名                                   |
-| `-frontend_url` | string | `tcp://*:5559` | 前端连接的地址                               |
-| `-backend_url`  | string | `tcp://*:5560` | 后端绑定的地址                               |
+| `-stack_name`   | string | `unknown`      | 服务堆名                                   |
+| `-frontend_url` | string | `tcp://*:5569` | 前端连接的地址                               |
+| `-backend_url`  | string | `tcp://*:5570` | 后端绑定的地址                               |
 | `-log_format`   | string | `json`         | 设定log的形式                                |
 | `-log_output`   | string | `空字符串`     | 设定log输出的流位置                          |
 | `-config_path`  | string | `空字符串`     | 设定读取配置文件地址                         |
@@ -33,8 +33,8 @@
 	"log_format":"json",
 	"log_output":"",
 	"conflate":false,
-	"receive_hwm":-1,
-	"send_hwm":-1
+	"receive_hwm":1000,
+	"send_hwm":1000
 }
 ```
 
