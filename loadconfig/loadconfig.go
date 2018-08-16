@@ -10,12 +10,15 @@ import (
 
 const defaultConfig string = `
 {
-	"server_name":"unknown",
-	"frontend_url":"tcp://localhost:5569",
-	"backend_url":"tcp://localhost:5570",
+	"stack_name":"unknown",
+	"frontend_url":"tcp://*:5569",
+	"backend_url":"tcp://*:5570",
 	"debug":false,
 	"log_format":"json",
-	"log_output":""
+	"log_output":"",
+	"conflate":false,
+	"receive_hwm":-1,
+	"send_hwm":-1
 }
 `
 
@@ -27,6 +30,9 @@ type Config struct {
 	LogFormat   string `json:"log_format"`
 	LogOutput   string `json:"log_output"`
 	Debug       bool   `json:"debug"`
+	Conflate    bool   `json:"conflate"`
+	RCVHWM      int    `json:"receive_hwm"`
+	SNDHWM      int    `json:"send_hwm"`
 }
 
 func loadConfig(content string) Config {

@@ -7,20 +7,19 @@ def _sub(args):
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
     socket.connect(args.url)
-    print(f"process subscribe @ {args.url} ")
-    
+    print(f"process subscribe @ {args.url} !")
+
     socket.setsockopt_string(zmq.SUBSCRIBE, args.topic)
 
     # Process 5 updates
     total_temp = 0
     for update_nbr in range(5):
         string = socket.recv_string()
-        zipcode, temperature, relhumidity = string.split()
+        print(f"recv string {string}")
+        topic, temperature, relhumidity = string.split(" ")
         total_temp += int(temperature)
-
-    print("Average temperature for zipcode '%s' was %dF" % (
-        zip_filter, total_temp / (update_nbr+1))
-    )
+    avg_t = total_temp / (update_nbr + 1)
+    print(f"Average temperature for zipcode {topic} was {avg_t}F")
 
 
 def _parser_args(params):

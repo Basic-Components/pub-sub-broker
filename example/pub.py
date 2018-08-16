@@ -2,26 +2,30 @@ import sys
 import argparse
 import zmq
 from random import randrange
+import time
 
 
 def _pub(args):
     #  Prepare our context and sockets
     context = zmq.Context()
-    socket = context.socket(zmq.PUB)
+    socket = context.socket(zmq.PUSH)
     socket.connect("tcp://localhost:5569")
+    print(f"process push @ {args.url} !")
 
     while True:
-        topic = randrange(1, 100000)
+        topic = 10001
         temperature = randrange(-80, 135)
         relhumidity = randrange(10, 60)
         socket.send_string("%i %i %i" % (topic, temperature, relhumidity))
+        print(f"temperature: {temperature},relhumidity {relhumidity} published @ topic {topic}")
+        time.sleep(1)
 
 
 def _parser_args(params):
     """解析命令行参数."""
     parser = argparse.ArgumentParser()
-    parser.add_argument('--url', type=str, default="tcp://localhost:5559", help="指定连接到哪个组件")
-    parser.set_defaults(func=_client)
+    parser.add_argument('--url', type=str, default="tcp://localhost:5569", help="指定连接到哪个组件")
+    parser.set_defaults(func=_pub)
     args = parser.parse_args(params)
     args.func(args)
 

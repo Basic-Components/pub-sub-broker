@@ -4,24 +4,43 @@
 package proxy
 
 import (
-	"log"
-
+	"github.com/Basic-Components/pub-sub-broker/consts"
 	loadconfig "github.com/Basic-Components/pub-sub-broker/loadconfig"
 
 	zmq "github.com/pebbe/zmq4"
+	log "github.com/sirupsen/logrus"
 )
 
 // 代理本体
 func Run(config loadconfig.Config) {
 	//  Prepare our sockets
-	frontend, _ := zmq.NewSocket(zmq.XSUB)
-	defer frontend.Close()
-	backend, _ := zmq.NewSocket(zmq.XPUB)
-	defer backend.Close()
-	frontend.Bind(config.FrontendURL)
-	backend.Bind(config.BackendURL)
+	collector, _ := zmq.NewSocket(zmq.PULL)
+	defer collector.Close()
 
-	//  Initialize poll set
-	err := zmq.Proxy(frontend, backend, nil)
-	log.Fatalln("Proxy interrupted:", err)
+	backend, _ := zmq.NewSocket(zmq.PUB)
+	defer backend.Close()
+
+	if config.Conflate {
+		collector.SetConflate(true)
+		backend.SetConflate(true)
+	} else {
+		if config.RCVHWM >= 0 {
+			collector.SetRcvhwm(config.RCVHWM)
+		}
+		if config.SNDHWM >= 0 {
+			backend.SetSndhwm(config.SNDHWM)
+		}
+	}
+	backend.Bind(config.BackendURL)
+	collector.Bind(config.FrontendURL)
+	for {
+		msg, _ := collector.Recv(0)
+		log.WithFields(log.Fields{
+			consts.TYPE: consts.NAME,
+			"Direction": "pull"}).Debug("pulled message!")
+		backend.Send(msg, 0)
+		log.WithFields(log.Fields{
+			consts.TYPE: consts.NAME,
+			"Direction": "publish"}).Debug("publish message to subscriber!")
+	}
 }
