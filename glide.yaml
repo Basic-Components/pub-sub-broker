@@ -1,0 +1,6 @@
+package: github.com/Basic-Components/pub-sub-broker
+import:
+- package: github.com/pebbe/zmq4
+  version: ^1.0.0
+- package: github.com/sirupsen/logrus
+  version: ^1.0.6
